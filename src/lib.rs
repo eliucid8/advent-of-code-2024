@@ -6,12 +6,20 @@ pub fn read_input(day: i32) -> String {
     return content;
 }
 
-pub fn parse_row_major<T: std::str::FromStr + std::default::Default>(input: &str) -> Vec<Vec<T>> {
+pub fn split_sections(input: &str) -> Vec<&str> {
+    let sections: Vec<&str> = input.split("\n\n").filter(|&x| !x.is_empty()).collect();
+    return sections;
+}
+
+pub fn parse_row_major<T: std::str::FromStr + std::default::Default>(
+    input: &str,
+    delimiter: &str,
+) -> Vec<Vec<T>> {
     let lines = input.split("\n");
     let mut rows: Vec<Vec<T>> = Vec::new();
     for line in lines {
         rows.push(
-            line.split(" ")
+            line.split(delimiter)
                 .filter(|&x| !x.is_empty())
                 .map(|x| x.parse::<T>().unwrap_or_default())
                 .collect(),

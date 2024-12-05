@@ -10,7 +10,7 @@ fn main() {
 }
 
 fn part1(input: &str) -> String {
-    let grid = parse_row_major::<i32>(input);
+    let grid = parse_row_major::<i32>(input, " ");
     let mut num_safe = 0;
     for row in grid {
         let increasing = row[1] >= row[0];
@@ -35,7 +35,7 @@ fn part1(input: &str) -> String {
 }
 
 fn part2_wrong(input: &str) -> String {
-    let grid = parse_row_major::<i32>(input);
+    let grid = parse_row_major::<i32>(input, " ");
     let mut num_safe = 0;
     for row in grid {
         if check_with_dampener(&row) {
@@ -47,7 +47,7 @@ fn part2_wrong(input: &str) -> String {
 }
 
 fn part2(input: &str) -> String {
-    let grid = parse_row_major::<i32>(input);
+    let grid = parse_row_major::<i32>(input, " ");
     let mut num_safe = 0;
     for row in grid {
         for i in 0..row.len() {
@@ -169,4 +169,3 @@ mod tests {
         assert_eq!(part2(test_input2), "1")
     }
 }
-
