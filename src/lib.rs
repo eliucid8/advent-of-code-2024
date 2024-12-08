@@ -18,12 +18,14 @@ pub fn parse_row_major<T: std::str::FromStr + std::default::Default>(
     let lines = input.split("\n");
     let mut rows: Vec<Vec<T>> = Vec::new();
     for line in lines {
-        rows.push(
-            line.split(delimiter)
-                .filter(|&x| !x.is_empty())
-                .map(|x| x.parse::<T>().unwrap_or_default())
-                .collect(),
-        );
+        if !line.is_empty() {
+            rows.push(
+                line.split(delimiter)
+                    .filter(|&x| !x.is_empty())
+                    .map(|x| x.parse::<T>().unwrap_or_default())
+                    .collect(),
+            );
+        }
     }
     return rows;
 }
