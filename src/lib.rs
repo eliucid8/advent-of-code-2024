@@ -30,6 +30,9 @@ pub fn parse_row_major<T: std::str::FromStr + std::default::Default>(
     return rows;
 }
 
+/**
+* Returns a 2d vec array of chars from a string
+*/
 pub fn parse_string_array(input: &str) -> Vec<Vec<char>> {
     let lines = input.split("\n");
     let mut rows: Vec<Vec<char>> = Vec::new();
