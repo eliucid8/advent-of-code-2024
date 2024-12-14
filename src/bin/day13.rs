@@ -7,9 +7,11 @@ fn main() {
     let binding = read_input(13);
     let input = binding.as_str();
 
-    println!("uh oh counts: {:#?}", uh_oh_count(&create_matrices(input)));
-
+    let uh_oh_1 = uh_oh_count(&create_matrices(input));
+    let uh_oh_2 = uh_oh_count(&create_matrices_2(input));
+    println!("uh oh counts, part 1: {}, {}", uh_oh_1.0, uh_oh_1.1);
     println!("Part 1: {}", part1(&input));
+    println!("uh oh counts, part 2: {}, {}", uh_oh_2.0, uh_oh_2.1);
     println!("Part 2: {}", part2(&input));
 }
 
@@ -20,7 +22,9 @@ fn part1(input: &str) -> String {
 }
 
 fn part2(input: &str) -> String {
-    "".to_string()
+    let matrices = create_matrices_2(input);
+    let sum = matrices.iter().fold(0, |acc, mat| acc + mat.token_cost());
+    sum.to_string()
 }
 
 fn create_matrices(input: &str) -> Vec<AugMat> {
@@ -28,10 +32,18 @@ fn create_matrices(input: &str) -> Vec<AugMat> {
     sections.iter().map(|s| AugMat::parse_section(s)).collect()
 }
 
+fn create_matrices_2(input: &str) -> Vec<AugMat> {
+    let sections = split_sections(input);
+    sections
+        .iter()
+        .map(|s| AugMat::parse_section_2(s))
+        .collect()
+}
+
 /**
  * Check if we're gonna have to do ugly integer programming
  */
-fn uh_oh_count(matrices: &Vec<AugMat>) -> (i32, i32) {
+fn uh_oh_count(matrices: &Vec<AugMat>) -> (i64, i64) {
     let od_count = matrices.iter().fold(0, |acc, mat| {
         if mat.check_overdetermined().0 {
             acc + 1
@@ -52,29 +64,29 @@ fn uh_oh_count(matrices: &Vec<AugMat>) -> (i32, i32) {
 }
 
 struct AugMat {
-    v1: (i32, i32),
-    v2: (i32, i32),
-    target: (i32, i32),
+    v1: (i64, i64),
+    v2: (i64, i64),
+    target: (i64, i64),
 }
 
 impl AugMat {
-    fn new(v1: (i32, i32), v2: (i32, i32), target: (i32, i32)) -> Self {
+    fn new(v1: (i64, i64), v2: (i64, i64), target: (i64, i64)) -> Self {
         AugMat { v1, v2, target }
     }
 
     fn parse_section(section: &str) -> Self {
-        let vecs: Vec<(i32, i32)> = section.lines().map(|l| get_xy_pair(l)).collect();
+        let vecs: Vec<(i64, i64)> = section.lines().map(|l| get_xy_pair(l)).collect();
         AugMat::new(vecs[0], vecs[1], vecs[2])
     }
 
-    //fn parse_section(section: &str) -> Self {
-    //    let vecs: Vec<(i32, i32)> = section.lines().map(|l| get_xy_pair(l)).collect();
-    //    AugMat::new(
-    //        vecs[0],
-    //        vecs[1],
-    //        (vecs[2].0 + 10000000000000, vecs[2].1 + 10000000000000),
-    //    )
-    //}
+    fn parse_section_2(section: &str) -> Self {
+        let vecs: Vec<(i64, i64)> = section.lines().map(|l| get_xy_pair(l)).collect();
+        AugMat::new(
+            vecs[0],
+            vecs[1],
+            (vecs[2].0 + 10000000000000, vecs[2].1 + 10000000000000),
+        )
+    }
 
     /**
      * Check if we need to do integer programming
@@ -86,19 +98,19 @@ impl AugMat {
         );
     }
 
-    fn det(&self) -> i32 {
+    fn det(&self) -> i64 {
         self.v1.0 * self.v2.1 - self.v2.0 * self.v1.1
     }
 
-    fn dx(&self) -> i32 {
+    fn dx(&self) -> i64 {
         self.target.0 * self.v2.1 - self.v2.0 * self.target.1
     }
 
-    fn dy(&self) -> i32 {
+    fn dy(&self) -> i64 {
         self.v1.0 * self.target.1 - self.target.0 * self.v1.1
     }
 
-    fn cramer_int(&self) -> Option<(i32, i32)> {
+    fn cramer_int(&self) -> Option<(i64, i64)> {
         if self.det() == 0 {
             return None;
         }
@@ -118,7 +130,7 @@ impl AugMat {
         }
     }
 
-    fn token_cost(&self) -> i32 {
+    fn token_cost(&self) -> i64 {
         let int_soln = self.cramer_int();
         if int_soln.is_some() {
             return int_soln.unwrap().0 * 3 + int_soln.unwrap().1;
@@ -138,13 +150,13 @@ impl fmt::Display for AugMat {
     }
 }
 
-fn get_xy_pair(line: &str) -> (i32, i32) {
+fn get_xy_pair(line: &str) -> (i64, i64) {
     let re = Regex::new(r".*X.(?<a>\d+).*Y.(?<b>\d+)").unwrap();
     let ret = re
         .captures_iter(line)
         .map(|caps| {
-            let a = caps.name("a").unwrap().as_str().parse::<i32>().unwrap();
-            let b = caps.name("b").unwrap().as_str().parse::<i32>().unwrap();
+            let a = caps.name("a").unwrap().as_str().parse::<i64>().unwrap();
+            let b = caps.name("b").unwrap().as_str().parse::<i64>().unwrap();
             (a, b)
         })
         .nth(0)
