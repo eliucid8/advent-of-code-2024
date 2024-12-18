@@ -44,3 +44,13 @@ pub fn parse_string_array(input: &str) -> Vec<Vec<char>> {
     }
     return rows;
 }
+
+/**
+ * Adds a i32 delta to a usize tuple. Useful for grid traversal.
+ */
+pub fn uadd_idirection(coord: (usize, usize), direction: (i32, i32)) -> (usize, usize) {
+    (
+        (coord.0 as i32 + direction.0) as usize,
+        (coord.1 as i32 + direction.1) as usize,
+    )
+}
