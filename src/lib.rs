@@ -1,5 +1,7 @@
 use std::{char, fs::read_to_string};
 
+use regex::Regex;
+
 pub fn read_input(day: i32) -> String {
     let path = format!("inputs/day{}.txt", day);
     let content = read_to_string(path).unwrap();
@@ -53,4 +55,16 @@ pub fn uadd_idirection(coord: (usize, usize), direction: (i32, i32)) -> (usize, 
         (coord.0 as i32 + direction.0) as usize,
         (coord.1 as i32 + direction.1) as usize,
     )
+}
+
+fn parse_coord(line: &str) -> (i32, i32) {
+    let re = Regex::new(r"(?P<x>-?\d+),(?P<y>-?\d+)").unwrap();
+    let caps = re.captures(line).unwrap();
+    let x = caps.name("x").unwrap().as_str().parse::<i32>().unwrap();
+    let y = caps.name("y").unwrap().as_str().parse::<i32>().unwrap();
+    (y, x)
+}
+
+pub fn parse_coords(input: &str) -> Vec<(i32, i32)> {
+    input.lines().map(|l| parse_coord(l)).collect()
 }
