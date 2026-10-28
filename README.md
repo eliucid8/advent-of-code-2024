@@ -31,3 +31,6 @@ Another grid BFS! Yay...... (It feels like we've had quite a few of these this y
 As it turns out, regex parsing is really slow! It took my code just as long to parse all the inputs as it did to solve part 2 with a suboptimal algorithm. 
 I'm going to have to come back to optimize. My current algorithm is O(n^2 * b) = O(n^4), where b is the number of bytes in the stream, and n is the length of the grid.
 I think this can be made linear in the number of bytes (quadratic for grid length?) via a union find and working backwards to merge connected components.
+
+### Day 19:
+Struggled a bit with the dynamic programming here--my solution is quite ugly and my memoization doesn't work across different rows and I'm not quite sure why? This would be a good problem to go back through again and form a cleaner solution.
